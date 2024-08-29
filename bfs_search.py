@@ -25,7 +25,8 @@ def bfs(graph, initial_pals, target_pal):
                         if other_parent == other_pal and result not in current_pals:
                             new_path = path + [(pal, other_parent, result)]
                             new_pals = current_pals + [result]
-
+                            if tuple(new_pals) in visited:
+                                continue
                             print(f"Exploring: {pal} + {other_pal} = {result}, New Pals: {new_pals}")
 
                             if result == target_pal:
@@ -42,12 +43,12 @@ if __name__ == "__main__":
     with open('breeding_graph.json', 'r') as f:
         graph = json.load(f)
     
-    initial_pals = ["Lamball", "Lifmunk", "Chikipi", "Flambelle"]  # Example list of pets the player currently has
-    target = "Cremis"  # Example target Pal
+    #initial_pals = ["Lamball", "Lifmunk", "Chikipi", "Flambelle"]  # Example list of pets the player currently has
+    #target = "Cremis"  # Example target Pal
 
      # try getting Blazehowl from a pool of Gumoss, Tombat, and Nitewing.
-    # initial_pals = ["Gumoss", "Tombat", "Nitewing"]  # Example list of pets the player currently has
-    # target = "Blazehowl"  # Example target Pal
+    initial_pals = ["Gumoss", "Tombat", "Nitewing"]  # Example list of pets the player currently has
+    target = "Blazehowl"  # Example target Pal
     
     path = bfs(graph, initial_pals, target)
     if path:
