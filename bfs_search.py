@@ -1,6 +1,7 @@
 import json
 import time
 from collections import deque
+from binarytree import Node
 
 def bfs(graph, initial_pals, target_pal, time_limit=3):
     """
@@ -41,6 +42,7 @@ def bfs(graph, initial_pals, target_pal, time_limit=3):
                             new_path = path + [(pal, other_parent, result)]
                             new_pals = current_pals + [result]
 
+
                             print(f"Exploring: {pal} + {other_pal} = {result}, New Pals: {new_pals}")
 
                             # Check if we have reached the target
@@ -54,21 +56,53 @@ def bfs(graph, initial_pals, target_pal, time_limit=3):
     print("No path found within the time limit.")
     return None  # No path found
 
+def build_tree(path):
+    path.reverse()
+    node_list = []
+    path[0] = tuple(reversed(path[0]))
+    root = Node(path[0][0])
+    root.left = Node(path[0][1])
+    root.right = Node(path[0][2])
+    node_list.append(root)
+    node_list.append(root.left)
+    node_list.append(root.right)
+    if len(path) == 1:
+        return root
+    else:
+        for i in range(1, len(path)):
+            path[i] = tuple(reversed(path[i]))
+            for node in node_list:
+                if node.value == path[i][0]:
+                    node.left = Node(path[i][1])
+                    node.right = Node(path[i][2])
+                    node_list.append(node.left)
+                    node_list.append(node.right)
+
+    return root
+
 if __name__ == "__main__":
     with open('breeding_graph.json', 'r') as f:
         graph = json.load(f)
     
     # Example lists of pets the player currently has
-    initial_pals = ["Lamball", "Lifmunk"]
+    #initial_pals = ["Lamball", "Lifmunk"]
     
     # Example target Pals
     # target = "Jolthog"
     # target = "Gumoss"
-    target = "Nitewing"
+    #target = "Nitewing"
     # target = "Blazehowl"  # Try getting Blazehowl from a pool of Gumoss, Tombat, and Nitewing
 
-    path = bfs(graph, initial_pals, target)
-    if path:
-        print("BFS Path:", " -> ".join([f"{p[0]} + {p[1]} = {p[2]}" for p in path]))
-    else:
-        print(f"No path found to breed {target} with the current Pals")
+    initial_pals = ["Tombat", "Nitewing", "Gumoss"]  # Example list of pets the player currently has
+    target = ["Blazehowl", "Vaelet"]  # Example target Pal
+    tree_list = []
+    for pal in target:
+        path = bfs(graph, initial_pals, pal)
+        if path:
+            print("BFS Path:", " -> ".join([f"{p[0]} + {p[1]} = {p[2]}" for p in path]))
+        else:
+            print(f"No path found to breed {target} with the current Pals")
+        tree = build_tree(path)
+        tree_list.append(tree)
+    for tree in tree_list:
+        print(tree)
